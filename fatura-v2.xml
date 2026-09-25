@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fatura id="FT2026/001">
+  <cabecalho>
+    <data>2026-09-25</data>
+    <cliente>
+      <nome>João Silva</nome>
+      <morada>Rua das Flores, 25, Viseu</morada>
+      <telefone>912345678</telefone>
+    </cliente>
+  </cabecalho>
+  <produtos>
+    <produto>
+      <codigo>P001</codigo>
+      <designacao>Teclado</designacao>
+      <preco>29.99</preco>
+      <quantidade>2</quantidade>
+    </produto>
+    <produto>
+      <codigo>P002</codigo>
+      <designacao>Rato</designacao>
+      <preco>19.99</preco>
+      <quantidade>1</quantidade>
+    </produto>
+  </produtos>
+</fatura>
