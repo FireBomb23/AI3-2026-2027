@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="BackgroundAgentGlobalSettings">
     <option name="selectedModelId" value="mistral-large-latest" />
     <option name="selectedProviderName" value="8f013610-2b60-4c36-a988-b693adb560c2" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31400af4-c674-4fa5-a0c6-c878b5d3a67d" name="ai3-2026-2027-1 Tarefa XML001" comment="Tarefa XML001">
-      <change afterPath="$PROJECT_DIR$/.agents/skills/tarefa/SKILL.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.claude/skills/tarefa/SKILL.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AGENTS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Sprints/JSON01/json01.url" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Sprints/OPENAPI01/openapi01.url" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
     </list>
     <list id="417bada4-994a-472a-b2c0-4d1c25b0b7e3" name="Changes" comment="Tarefa XML001" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,12 +33,12 @@
     &quot;assignee&quot;: &quot;cunhaestgv&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/cunhaestgv/AI3-2026-2027",
-    "accountId": "a0e392a6-66b4-4d3a-b0b2-a79fc9081c32"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/cunhaestgv/AI3-2026-2027&quot;,
+    &quot;accountId&quot;: &quot;92f77999-afc8-4e95-b280-035af4d624a7&quot;
   }
-}]]></component>
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -72,7 +72,11 @@
     "copilot.chat.legacySessionMetadata.migrated": "true",
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/ci/Downloads/apagar2",
+    "last_opened_file_path": "/Users/cunha/Downloads/AI3-2026-2027/Sprints/JSON01",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
@@ -82,6 +86,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Sprints/JSON01" />
+      <recent name="$PROJECT_DIR$/Sprints/OPENAPI01" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
