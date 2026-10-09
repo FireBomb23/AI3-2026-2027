@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<fatura>
+    <cabecalho>
+        <numero>2026-001</numero>
+        <data>25-09-2026</data>
+
+        <cliente>
+            <nome>João Silva</nome>
+            <morada>Rua das Flores, 25, Viseu</morada>
+            <telefone>912345678</telefone>
+        </cliente>
+    </cabecalho>
+
+    <produtos>
+        <produto>
+            <codigo>P001</codigo>
+            <designacao>Teclado</designacao>
+            <quantidade>2</quantidade>
+            <preco>29.99</preco>
+        </produto>
+    </produtos>
+</fatura>
