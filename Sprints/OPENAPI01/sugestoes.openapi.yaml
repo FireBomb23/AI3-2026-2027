@@ -247,3 +247,164 @@ paths:
                   $ref: '#/components/schemas/Categoria'
         default:
           $ref: '#/components/responses/ErroGenerico'
+          /estatisticas/resolucao:
+    get:
+      operationId: obterEstatisticasResolucao
+      summary: Totais por estado, taxa e tempo médio de resolução
+      parameters:
+        - $ref: '#/components/parameters/AnoLetivo'
+      responses:
+        '200':
+          description: Estatísticas de resolução do ano letivo pedido
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheEstatisticas'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstatisticasResolucao'
+              example:
+                anoLetivo: '2026-2027'
+                totalSugestoes: 40
+                porEstado:
+                  submetida: 8
+                  em_analise: 10
+                  aceite: 7
+                  rejeitada: 5
+                  resolvida: 10
+                taxaResolucao: 0.25
+                tempoMedioResolucaoDias: 18.5
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+  /estatisticas/categorias:
+    get:
+      operationId: obterEstatisticasCategorias
+      summary: Os mesmos indicadores, por categoria
+      parameters:
+        - $ref: '#/components/parameters/AnoLetivo'
+      responses:
+        '200':
+          description: Estatísticas por categoria do ano letivo pedido
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheEstatisticas'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstatisticasCategorias'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+components:
+  parameters:
+    IdSugestao:
+      name: id
+      in: path
+      required: true
+      description: Identificador da sugestão
+      schema:
+        type: integer
+        minimum: 1
+    AnoLetivo:
+      name: anoLetivo
+      in: query
+      required: true
+      description: Ano letivo na forma AAAA-AAAA
+      schema:
+        type: string
+        pattern: '^[0-9]{4}-[0-9]{4}$'
+
+  headers:
+    CacheCategorias:
+      schema:
+        type: string
+        enum:
+          - 'public, max-age=86400'
+    CacheEstatisticas:
+      schema:
+        type: string
+        enum:
+          - 'public, max-age=3600'
+    CachePrivadoNoCache:
+      schema:
+        type: string
+        enum:
+          - 'private, no-cache'
+    CacheNoStore:
+      schema:
+        type: string
+        enum:
+          - 'no-store'
+    ETagAtual:
+      description: Identificador da versão atual do recurso
+      schema:
+        type: string
+    ETagNovaVersao:
+      description: Identificador da nova versão do recurso
+      schema:
+        type: string
+    Location:
+      description: URL do recurso criado
+      schema:
+        type: string
+
+  responses:
+    PedidoInvalido:
+      description: Pedido mal formado ou dados que não cumprem o schema
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    NaoEncontrado:
+      description: Não existe sugestão com esse id
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ConflitoSugestaoFechada:
+      description: Conflito com a regra de que só uma sugestão no estado submetida pode ser editada ou retirada
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ConflitoTransicao:
+      description: Conflito com as transições de estado permitidas (submetida para em_analise; em_analise para aceite ou rejeitada; aceite para resolvida); uma sugestão rejeitada ou resolvida está fechada
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    PrecondicaoFalhada:
+      description: A condição If-Match falhou, a sugestão foi alterada entretanto
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ErroGenerico:
+      description: Qualquer outro erro, por exemplo 500
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
