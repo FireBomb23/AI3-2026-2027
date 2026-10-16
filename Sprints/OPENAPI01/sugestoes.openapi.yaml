@@ -1,0 +1,410 @@
+openapi: 3.0.3
+info:
+  title: API de Sugestões dos Alunos
+  version: 1.0.0
+  description: API para os alunos submeterem sugestões, os serviços acompanharem o seu tratamento e qualquer pessoa consultar estatísticas de resolução.
+servers:
+  - url: https://api.estgv.exemplo/v1
+
+paths:
+  /sugestoes:
+    get:
+      operationId: listarSugestoes
+      summary: Listar sugestões, com filtros e paginação
+      parameters:
+        - name: estado
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Estado'
+        - name: categoria
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/CodigoCategoria'
+        - name: pagina
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: tamanhoPagina
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+      responses:
+        '200':
+          description: Página de sugestões que cumprem os filtros
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CachePrivadoNoCache'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaSugestoes'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+    post:
+      operationId: criarSugestao
+      summary: Submeter uma sugestão
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SugestaoNova'
+      responses:
+        '201':
+          description: Sugestão criada; o cabeçalho Location indica o seu URL
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+            Cache-Control:
+              $ref: '#/components/headers/CacheNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sugestao'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+  /sugestoes/{id}:
+    get:
+      operationId: obterSugestao
+      summary: Obter uma sugestão
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+        - name: If-None-Match
+          in: header
+          required: false
+          description: ETag da cópia que o cliente já tem, para revalidação
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A sugestão pedida
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETagAtual'
+            Cache-Control:
+              $ref: '#/components/headers/CachePrivadoNoCache'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sugestao'
+              example:
+                titulo: Mais tomadas na biblioteca
+                descricao: Seria útil haver mais tomadas junto das mesas de estudo da biblioteca.
+                categoria: instalacoes
+                numeroAluno: '20261234'
+                id: 42
+                estado: aceite
+                dataCriacao: '2026-10-09T14:30:00Z'
+                dataAtualizacao: '2026-10-12T09:15:00Z'
+                dataResolucao: null
+        '304':
+          description: A cópia que o cliente tem continua válida
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETagAtual'
+            Cache-Control:
+              $ref: '#/components/headers/CachePrivadoNoCache'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+    put:
+      operationId: substituirSugestao
+      summary: Editar uma sugestão ainda submetida
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+        - name: If-Match
+          in: header
+          required: true
+          description: ETag da versão que o cliente leu; se o recurso mudou, o servidor responde 412
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SugestaoNova'
+      responses:
+        '200':
+          description: Sugestão substituída
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETagNovaVersao'
+            Cache-Control:
+              $ref: '#/components/headers/CacheNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sugestao'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/ConflitoSugestaoFechada'
+        '412':
+          $ref: '#/components/responses/PrecondicaoFalhada'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+    delete:
+      operationId: retirarSugestao
+      summary: Retirar uma sugestão ainda submetida
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+      responses:
+        '204':
+          description: Sugestão retirada
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheNoStore'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/ConflitoSugestaoFechada'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+          /sugestoes/{id}/acompanhamentos:
+    get:
+      operationId: listarAcompanhamentos
+      summary: Histórico de acompanhamento, do mais antigo para o mais recente
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+      responses:
+        '200':
+          description: Acompanhamentos da sugestão, do mais antigo para o mais recente
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CachePrivadoNoCache'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Acompanhamento'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+    post:
+      operationId: registarAcompanhamento
+      summary: Registar uma mudança de estado
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcompanhamentoNovo'
+      responses:
+        '201':
+          description: Acompanhamento registado e estado da sugestão alterado
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Acompanhamento'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/ConflitoTransicao'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+  /categorias:
+    get:
+      operationId: listarCategorias
+      summary: Listar as categorias e a sua descrição
+      responses:
+        '200':
+          description: Todas as categorias
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheCategorias'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Categoria'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+          /estatisticas/resolucao:
+    get:
+      operationId: obterEstatisticasResolucao
+      summary: Totais por estado, taxa e tempo médio de resolução
+      parameters:
+        - $ref: '#/components/parameters/AnoLetivo'
+      responses:
+        '200':
+          description: Estatísticas de resolução do ano letivo pedido
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheEstatisticas'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstatisticasResolucao'
+              example:
+                anoLetivo: '2026-2027'
+                totalSugestoes: 40
+                porEstado:
+                  submetida: 8
+                  em_analise: 10
+                  aceite: 7
+                  rejeitada: 5
+                  resolvida: 10
+                taxaResolucao: 0.25
+                tempoMedioResolucaoDias: 18.5
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+  /estatisticas/categorias:
+    get:
+      operationId: obterEstatisticasCategorias
+      summary: Os mesmos indicadores, por categoria
+      parameters:
+        - $ref: '#/components/parameters/AnoLetivo'
+      responses:
+        '200':
+          description: Estatísticas por categoria do ano letivo pedido
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheEstatisticas'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstatisticasCategorias'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+components:
+  parameters:
+    IdSugestao:
+      name: id
+      in: path
+      required: true
+      description: Identificador da sugestão
+      schema:
+        type: integer
+        minimum: 1
+    AnoLetivo:
+      name: anoLetivo
+      in: query
+      required: true
+      description: Ano letivo na forma AAAA-AAAA
+      schema:
+        type: string
+        pattern: '^[0-9]{4}-[0-9]{4}$'
+
+  headers:
+    CacheCategorias:
+      schema:
+        type: string
+        enum:
+          - 'public, max-age=86400'
+    CacheEstatisticas:
+      schema:
+        type: string
+        enum:
+          - 'public, max-age=3600'
+    CachePrivadoNoCache:
+      schema:
+        type: string
+        enum:
+          - 'private, no-cache'
+    CacheNoStore:
+      schema:
+        type: string
+        enum:
+          - 'no-store'
+    ETagAtual:
+      description: Identificador da versão atual do recurso
+      schema:
+        type: string
+    ETagNovaVersao:
+      description: Identificador da nova versão do recurso
+      schema:
+        type: string
+    Location:
+      description: URL do recurso criado
+      schema:
+        type: string
+
+  responses:
+    PedidoInvalido:
+      description: Pedido mal formado ou dados que não cumprem o schema
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    NaoEncontrado:
+      description: Não existe sugestão com esse id
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ConflitoSugestaoFechada:
+      description: Conflito com a regra de que só uma sugestão no estado submetida pode ser editada ou retirada
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ConflitoTransicao:
+      description: Conflito com as transições de estado permitidas (submetida para em_analise; em_analise para aceite ou rejeitada; aceite para resolvida); uma sugestão rejeitada ou resolvida está fechada
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    PrecondicaoFalhada:
+      description: A condição If-Match falhou, a sugestão foi alterada entretanto
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ErroGenerico:
+      description: Qualquer outro erro, por exemplo 500
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
