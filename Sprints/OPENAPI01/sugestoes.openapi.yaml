@@ -176,3 +176,74 @@ paths:
           $ref: '#/components/responses/ConflitoSugestaoFechada'
         default:
           $ref: '#/components/responses/ErroGenerico'
+
+          /sugestoes/{id}/acompanhamentos:
+    get:
+      operationId: listarAcompanhamentos
+      summary: Histórico de acompanhamento, do mais antigo para o mais recente
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+      responses:
+        '200':
+          description: Acompanhamentos da sugestão, do mais antigo para o mais recente
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CachePrivadoNoCache'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Acompanhamento'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+    post:
+      operationId: registarAcompanhamento
+      summary: Registar uma mudança de estado
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcompanhamentoNovo'
+      responses:
+        '201':
+          description: Acompanhamento registado e estado da sugestão alterado
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Acompanhamento'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/ConflitoTransicao'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+  /categorias:
+    get:
+      operationId: listarCategorias
+      summary: Listar as categorias e a sua descrição
+      responses:
+        '200':
+          description: Todas as categorias
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheCategorias'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Categoria'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
