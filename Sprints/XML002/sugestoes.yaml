@@ -1,0 +1,202 @@
+openapi: 3.0.3
+info:
+  title: API de Sugestões dos Alunos
+  version: 2.0.0
+  description: API para os alunos submeterem sugestões, os serviços acompanharem o seu tratamento e qualquer pessoa consultar estatísticas de resolução. As operações sobre sugestões e acompanhamentos exigem autenticação por token JWT, obtido em POST /tokens com utilizador e palavra-passe; as categorias, as estatísticas e a emissão de tokens são públicas.
+servers:
+  - url: https://api.estgv.exemplo/v2
+
+security:
+  - tokenJWT: []
+
+paths:
+  /sugestoes:
+    get:
+      operationId: listarSugestoes
+      summary: Listar sugestões, com filtros e paginação
+      description: Papel admitido, aluno ou servicos. Um aluno obtém apenas as suas sugestões; os serviços obtêm todas.
+      parameters:
+        - name: estado
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Estado'
+        - name: categoria
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/CodigoCategoria'
+        - name: pagina
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: tamanhoPagina
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+      responses:
+        '200':
+          description: Página de sugestões que cumprem os filtros
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CachePrivadoNoCache'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaSugestoes'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+    post:
+      operationId: criarSugestao
+      summary: Submeter uma sugestão
+      description: Papel admitido, aluno. O número de aluno da sugestão é o do token (claim sub), nunca o do corpo do pedido.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SugestaoNova'
+      responses:
+        '201':
+          description: Sugestão criada; o cabeçalho Location indica o seu URL
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+            Cache-Control:
+              $ref: '#/components/headers/CacheNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sugestao'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '403':
+          $ref: '#/components/responses/Proibido'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+
+  /sugestoes/{id}:
+    get:
+      operationId: obterSugestao
+      summary: Obter uma sugestão
+      description: Papel admitido, aluno ou servicos. Um aluno só acede às suas sugestões; os serviços acedem a todas.
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+        - name: If-None-Match
+          in: header
+          required: false
+          description: ETag da cópia que o cliente já tem, para revalidação
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A sugestão pedida
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETagAtual'
+            Cache-Control:
+              $ref: '#/components/headers/CachePrivadoNoCache'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sugestao'
+              example:
+                titulo: Mais tomadas na biblioteca
+                descricao: Seria útil haver mais tomadas junto das mesas de estudo da biblioteca.
+                categoria: instalacoes
+                numeroAluno: '20261234'
+                id: 42
+                estado: aceite
+                dataCriacao: '2026-10-09T14:30:00Z'
+                dataAtualizacao: '2026-10-12T09:15:00Z'
+                dataResolucao: null
+        '304':
+          description: A cópia que o cliente tem continua válida
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETagAtual'
+            Cache-Control:
+              $ref: '#/components/headers/CachePrivadoNoCache'
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+    put:
+      operationId: substituirSugestao
+      summary: Editar uma sugestão ainda submetida
+      description: Papel admitido, aluno, apenas nas suas sugestões. Os serviços recebem 403.
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+        - name: If-Match
+          in: header
+          required: true
+          description: ETag da versão que o cliente leu; se o recurso mudou, o servidor responde 412
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SugestaoNova'
+      responses:
+        '200':
+          description: Sugestão substituída
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETagNovaVersao'
+            Cache-Control:
+              $ref: '#/components/headers/CacheNoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sugestao'
+        '400':
+          $ref: '#/components/responses/PedidoInvalido'
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '403':
+          $ref: '#/components/responses/Proibido'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/ConflitoSugestaoFechada'
+        '412':
+          $ref: '#/components/responses/PrecondicaoFalhada'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
+    delete:
+      operationId: retirarSugestao
+      summary: Retirar uma sugestão ainda submetida
+      description: Papel admitido, aluno, apenas nas suas sugestões. Os serviços recebem 403.
+      parameters:
+        - $ref: '#/components/parameters/IdSugestao'
+      responses:
+        '204':
+          description: Sugestão retirada
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/CacheNoStore'
+        '401':
+          $ref: '#/components/responses/NaoAutenticado'
+        '403':
+          $ref: '#/components/responses/Proibido'
+        '404':
+          $ref: '#/components/responses/NaoEncontrado'
+        '409':
+          $ref: '#/components/responses/ConflitoSugestaoFechada'
+        default:
+          $ref: '#/components/responses/ErroGenerico'
