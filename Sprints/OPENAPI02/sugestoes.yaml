@@ -365,3 +365,169 @@ paths:
         application/json:
           schema:
             $ref: '#/components/schemas/Erro'
+            
+  components:
+  securitySchemes:
+    tokenJWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Token obtido em POST /tokens e enviado em `Authorization: Bearer <token>`.
+
+        Claims do payload:
+
+        | Claim | Tipo | Significado |
+        |---|---|---|
+        | sub | string | Utilizador autenticado (número de aluno ou nome.apelido) |
+        | nome | string | Nome completo do utilizador |
+        | papel | string | `aluno` ou `servicos` |
+        | iat | inteiro | Instante de emissão, em segundos desde 1970-01-01T00:00:00Z |
+        | exp | inteiro | Instante de expiração, em segundos desde 1970-01-01T00:00:00Z |
+
+  parameters:
+    IdSugestao:
+      name: id
+      in: path
+      required: true
+      description: Identificador da sugestão
+      schema:
+        type: integer
+        minimum: 1
+    AnoLetivo:
+      name: anoLetivo
+      in: query
+      required: true
+      description: Ano letivo na forma AAAA-AAAA
+      schema:
+        type: string
+        pattern: '^[0-9]{4}-[0-9]{4}$'
+
+  headers:
+    CacheCategorias:
+      schema:
+        type: string
+        enum:
+          - 'public, max-age=86400'
+    CacheEstatisticas:
+      schema:
+        type: string
+        enum:
+          - 'public, max-age=3600'
+    CachePrivadoNoCache:
+      schema:
+        type: string
+        enum:
+          - 'private, no-cache'
+    CacheNoStore:
+      schema:
+        type: string
+        enum:
+          - 'no-store'
+    WWWAuthenticate:
+      description: Esquema de autenticação a utilizar; com error, indica que o token enviado foi rejeitado
+      schema:
+        type: string
+        enum:
+          - 'Bearer'
+          - 'Bearer error="invalid_token"'
+    ETagAtual:
+      description: Identificador da versão atual do recurso
+      schema:
+        type: string
+    ETagNovaVersao:
+      description: Identificador da nova versão do recurso
+      schema:
+        type: string
+    Location:
+      description: URL do recurso criado
+      schema:
+        type: string
+
+  responses:
+    PedidoInvalido:
+      description: Pedido mal formado ou dados que não cumprem o schema
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    NaoAutenticado:
+      description: Pedido não autenticado; token ausente (Bearer) ou inválido, adulterado ou expirado (Bearer error="invalid_token")
+      headers:
+        WWW-Authenticate:
+          $ref: '#/components/headers/WWWAuthenticate'
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+          example:
+            codigo: 401
+            mensagem: Token ausente, inválido ou expirado.
+    CredenciaisInvalidas:
+      description: Credenciais incorretas; a resposta é a mesma para utilizador inexistente e para palavra-passe errada
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    Proibido:
+      description: Pedido autenticado, mas a identidade não tem permissão para a operação (papel não admitido)
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    NaoEncontrado:
+      description: Não existe sugestão com esse id. Esta é também a resposta a um aluno que pede uma sugestão de que não é autor.
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ConflitoSugestaoFechada:
+      description: Conflito com a regra de que só uma sugestão no estado submetida pode ser editada ou retirada
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ConflitoTransicao:
+      description: Conflito com as transições de estado permitidas (submetida para em_analise; em_analise para aceite ou rejeitada; aceite para resolvida); uma sugestão rejeitada ou resolvida está fechada
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    PrecondicaoFalhada:
+      description: A condição If-Match falhou, a sugestão foi alterada entretanto
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
+    ErroGenerico:
+      description: Qualquer outro erro, por exemplo 500
+      headers:
+        Cache-Control:
+          $ref: '#/components/headers/CacheNoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro'
