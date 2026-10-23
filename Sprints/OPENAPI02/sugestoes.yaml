@@ -531,3 +531,244 @@ paths:
         application/json:
           schema:
             $ref: '#/components/schemas/Erro'
+            schemas:
+    Estado:
+      type: string
+      enum: [submetida, em_analise, aceite, rejeitada, resolvida]
+
+    CodigoCategoria:
+      type: string
+      enum: [instalacoes, ensino, servicos, atividades, outra]
+
+    Categoria:
+      type: object
+      properties:
+        codigo:
+          $ref: '#/components/schemas/CodigoCategoria'
+        descricao:
+          type: string
+          minLength: 3
+          maxLength: 80
+      required: [codigo, descricao]
+
+    SugestaoNova:
+      type: object
+      properties:
+        titulo:
+          type: string
+          minLength: 10
+          maxLength: 120
+        descricao:
+          type: string
+          minLength: 20
+          maxLength: 2000
+        categoria:
+          $ref: '#/components/schemas/CodigoCategoria'
+      required: [titulo, descricao, categoria]
+
+    Sugestao:
+      allOf:
+        - $ref: '#/components/schemas/SugestaoNova'
+        - type: object
+          properties:
+            id:
+              type: integer
+              minimum: 1
+              readOnly: true
+            numeroAluno:
+              type: string
+              pattern: '^[0-9]{5,8}$'
+              readOnly: true
+            estado:
+              allOf:
+                - $ref: '#/components/schemas/Estado'
+              readOnly: true
+            dataCriacao:
+              type: string
+              format: date-time
+              readOnly: true
+            dataAtualizacao:
+              type: string
+              format: date-time
+              readOnly: true
+            dataResolucao:
+              type: string
+              format: date-time
+              nullable: true
+              readOnly: true
+          required: [id, numeroAluno, estado, dataCriacao, dataAtualizacao, dataResolucao]
+
+    AcompanhamentoNovo:
+      type: object
+      properties:
+        novoEstado:
+          $ref: '#/components/schemas/Estado'
+        nota:
+          type: string
+          minLength: 5
+          maxLength: 500
+      required: [novoEstado, nota]
+
+    Acompanhamento:
+      allOf:
+        - $ref: '#/components/schemas/AcompanhamentoNovo'
+        - type: object
+          properties:
+            id:
+              type: integer
+              minimum: 1
+              readOnly: true
+            responsavel:
+              type: string
+              minLength: 5
+              maxLength: 60
+              pattern: '^[A-Z][a-z]+ [A-Z][a-z]+$'
+              readOnly: true
+            estadoAnterior:
+              allOf:
+                - $ref: '#/components/schemas/Estado'
+              readOnly: true
+            data:
+              type: string
+              format: date-time
+              readOnly: true
+          required: [id, responsavel, estadoAnterior, data]
+
+    Credenciais:
+      type: object
+      properties:
+        utilizador:
+          type: string
+          description: Número de aluno (5 a 8 algarismos) ou identificador nome.apelido, em minúsculas e sem acentos
+          pattern: '^([0-9]{5,8}|[a-z]+\.[a-z]+)$'
+        palavraPasse:
+          type: string
+          format: password
+          minLength: 8
+          maxLength: 128
+      required: [utilizador, palavraPasse]
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT na forma cabeçalho.payload.assinatura, em base64url
+          pattern: '^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$'
+        tipo:
+          type: string
+          enum: [Bearer]
+        expiraEm:
+          type: integer
+          minimum: 1
+          description: Validade do token, em segundos
+      required: [token, tipo, expiraEm]
+
+    ListaSugestoes:
+      type: object
+      properties:
+        pagina:
+          type: integer
+          minimum: 1
+        tamanhoPagina:
+          type: integer
+          minimum: 1
+          maximum: 50
+        total:
+          type: integer
+          minimum: 0
+        itens:
+          type: array
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/Sugestao'
+      required: [pagina, tamanhoPagina, total, itens]
+
+    EstatisticasResolucao:
+      type: object
+      properties:
+        anoLetivo:
+          type: string
+          pattern: '^[0-9]{4}-[0-9]{4}$'
+        totalSugestoes:
+          type: integer
+          minimum: 0
+        porEstado:
+          type: object
+          properties:
+            submetida:
+              type: integer
+              minimum: 0
+            em_analise:
+              type: integer
+              minimum: 0
+            aceite:
+              type: integer
+              minimum: 0
+            rejeitada:
+              type: integer
+              minimum: 0
+            resolvida:
+              type: integer
+              minimum: 0
+          required: [submetida, em_analise, aceite, rejeitada, resolvida]
+        taxaResolucao:
+          type: number
+          minimum: 0
+          maximum: 1
+        tempoMedioResolucaoDias:
+          type: number
+          minimum: 0
+          nullable: true
+      required: [anoLetivo, totalSugestoes, porEstado, taxaResolucao, tempoMedioResolucaoDias]
+
+    EstatisticasCategorias:
+      type: object
+      properties:
+        anoLetivo:
+          type: string
+          pattern: '^[0-9]{4}-[0-9]{4}$'
+        categorias:
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            type: object
+            properties:
+              categoria:
+                $ref: '#/components/schemas/CodigoCategoria'
+              total:
+                type: integer
+                minimum: 0
+              resolvidas:
+                type: integer
+                minimum: 0
+              taxaResolucao:
+                type: number
+                minimum: 0
+                maximum: 1
+            required: [categoria, total, resolvidas, taxaResolucao]
+      required: [anoLetivo, categorias]
+
+    Erro:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          minimum: 400
+          maximum: 599
+        mensagem:
+          type: string
+          minLength: 1
+          maxLength: 200
+        detalhes:
+          type: array
+          items:
+            type: object
+            properties:
+              campo:
+                type: string
+              problema:
+                type: string
+            required: [campo, problema]
+      required: [codigo, mensagem]
