@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sugestões dos Alunos</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<main>
+  <h1>Sugestões dos Alunos</h1>
+
+  <div id="mensagens" role="alert"></div>
+
+  <section aria-labelledby="titulo-config">
+    <h2 id="titulo-config">Configurações</h2>
+    <div class="linha">
+      <div>
+        <label for="cfg-tema">Tema</label>
+        <select id="cfg-tema">
+          <option value="claro">Claro</option>
+          <option value="escuro">Escuro</option>
+        </select>
+      </div>
+      <div>
+        <label for="cfg-ordenacao">Ordenação das sugestões</label>
+        <select id="cfg-ordenacao">
+          <option value="recentes">Mais recentes primeiro</option>
+          <option value="estado">Por estado</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <p id="a-verificar">A verificar a sessão…</p>
+
+  <section id="entrada" aria-labelledby="titulo-entrada" hidden>
+    <h2 id="titulo-entrada">Entrar</h2>
+    <form id="form-entrada">
+      <label for="utilizador">Utilizador (número de aluno ou nome.apelido)</label>
+      <input id="utilizador" name="utilizador" autocomplete="username" required>
+      <label for="palavraPasse">Palavra-passe</label>
+      <input id="palavraPasse" name="palavraPasse" type="password" autocomplete="current-password" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </section>
+
+  <div id="sessao" hidden>
+    <section aria-labelledby="titulo-sessao">
+      <h2 id="titulo-sessao">Sessão</h2>
+      <p><strong id="sessao-nome"></strong> (<span id="sessao-papel"></span>)</p>
+      <p>A sessão expira às <span id="sessao-expira"></span>. Tempo restante: <span id="sessao-restante"></span>.</p>
+      <p>
+        <button id="btn-sugestoes" type="button"></button>
+        <button id="btn-terminar" type="button" class="secundario">Terminar sessão</button>
+      </p>
+      <ul id="lista-sugestoes"></ul>
+    </section>
+
+    <section id="area-nova" aria-labelledby="titulo-nova" hidden>
+      <h2 id="titulo-nova">Nova sugestão</h2>
+      <form id="form-nova">
+        <label for="titulo">Título (10 a 120 caracteres)</label>
+        <input id="titulo" name="titulo" maxlength="120">
+        <label for="categoria">Categoria</label>
+        <select id="categoria" name="categoria">
+          <option value="instalacoes">Instalações</option>
+          <option value="ensino">Ensino</option>
+          <option value="servicos">Serviços</option>
+          <option value="atividades">Atividades</option>
+          <option value="outra">Outra</option>
+        </select>
+        <label for="descricao">Descrição (20 a 2000 caracteres)</label>
+        <textarea id="descricao" name="descricao" maxlength="2000"></textarea>
+        <button type="submit">Submeter</button>
+      </form>
+    </section>
+  </div>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

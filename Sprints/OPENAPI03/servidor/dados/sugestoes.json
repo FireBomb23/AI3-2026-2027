@@ -1,0 +1,6 @@
+[
+  { "titulo": "Mais tomadas na biblioteca", "descricao": "Seria útil haver mais tomadas junto das mesas de estudo da biblioteca.", "categoria": "instalacoes", "id": 1, "numeroAluno": "12345", "estado": "submetida", "dataCriacao": "2026-10-09T14:30:00Z", "dataAtualizacao": "2026-10-09T14:30:00Z", "dataResolucao": null },
+  { "titulo": "Horário alargado do bar", "descricao": "O bar fecha cedo demais nos dias com aulas à tarde, o que obriga a sair do campus.", "categoria": "servicos", "id": 2, "numeroAluno": "12345", "estado": "aceite", "dataCriacao": "2026-10-05T10:00:00Z", "dataAtualizacao": "2026-10-12T09:15:00Z", "dataResolucao": null },
+  { "titulo": "Mais lugares de estacionamento", "descricao": "O parque de estacionamento enche por volta das 9h e quase não há lugares livres.", "categoria": "instalacoes", "id": 3, "numeroAluno": "67890", "estado": "em_analise", "dataCriacao": "2026-10-10T09:00:00Z", "dataAtualizacao": "2026-10-11T11:20:00Z", "dataResolucao": null },
+  { "titulo": "Wi-Fi instável no bloco B", "descricao": "A ligação à rede cai muitas vezes durante as aulas práticas no bloco B.", "categoria": "instalacoes", "id": 4, "numeroAluno": "67890", "estado": "resolvida", "dataCriacao": "2026-10-01T10:00:00Z", "dataAtualizacao": "2026-10-20T16:00:00Z", "dataResolucao": "2026-10-20T16:00:00Z" }
+]

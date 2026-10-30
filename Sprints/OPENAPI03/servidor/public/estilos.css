@@ -1,0 +1,27 @@
+:root { color-scheme: light; --fundo:#f6f7f9; --cartao:#fff; --texto:#1c2330; --suave:#4f5a6c; --linha:#c9d0dc; --acento:#1f5fbf; --erro:#8f1d17; --erro-fundo:#fdecea; }
+* { box-sizing: border-box; }
+body { margin:0; font:16px/1.5 system-ui, sans-serif; background:var(--fundo); color:var(--texto); }
+main { max-width:640px; margin:0 auto; padding:1rem; }
+h1 { font-size:1.5rem; margin:.5rem 0 1rem; }
+h2 { font-size:1.15rem; margin:0 0 .75rem; }
+section { background:var(--cartao); border:1px solid var(--linha); border-radius:10px; padding:1rem 1.25rem; margin-bottom:1rem; }
+label { display:block; margin:.7rem 0 .2rem; color:var(--suave); font-size:.9rem; }
+input { width:100%; font:inherit; padding:.5rem .6rem; border:1px solid var(--linha); border-radius:6px; }
+button { font:inherit; padding:.5rem .9rem; margin:.8rem .4rem 0 0; border:1px solid var(--acento); border-radius:6px; background:var(--acento); color:#fff; cursor:pointer; }
+button.secundario { background:transparent; color:var(--acento); }
+:focus-visible { outline:3px solid #ff9f1c; outline-offset:2px; }
+/* Mensagens: borda, ícone e texto em negrito, e não apenas a cor */
+#mensagens:not(:empty) { margin:0 0 1rem; padding:.7rem 1rem; border:2px solid var(--erro); border-left-width:8px; background:var(--erro-fundo); color:var(--erro); font-weight:700; border-radius:6px; }
+#mensagens:not(:empty)::before { content:"\26A0\FE0F  Atenção: "; }
+ul { list-style:none; margin:1rem 0 0; padding:0; display:grid; gap:.6rem; }
+li { border:1px solid var(--linha); border-radius:8px; padding:.6rem .8rem; }
+li small { color:var(--suave); display:block; }
+[hidden] { display:none !important; }
+
+:root[data-tema="escuro"] { color-scheme: dark; --fundo:#14181f; --cartao:#1d232d; --texto:#e8ecf2; --suave:#a3aec0; --linha:#3a4456; --acento:#6aa4ff; --erro:#ffb4ab; --erro-fundo:#3a1f1d; }
+:root[data-tema="escuro"] button { color:#0d1117; }
+:root[data-tema="escuro"] button.secundario { color:var(--acento); }
+input, select, textarea { width:100%; font:inherit; color:inherit; background:var(--fundo); padding:.5rem .6rem; border:1px solid var(--linha); border-radius:6px; }
+textarea { min-height:6rem; resize:vertical; }
+.linha { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+@media (max-width:420px) { .linha { grid-template-columns:1fr; } }
