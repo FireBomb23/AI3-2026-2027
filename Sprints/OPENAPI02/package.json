@@ -1,0 +1,15 @@
+{
+  "name": "api-sugestoes",
+  "version": "2.1.0",
+  "private": true,
+  "description": "API de Sugestões dos Alunos (ficha API03: cookies e armazenamento no browser)",
+  "main": "servidor.js",
+  "scripts": {
+    "start": "node --env-file=.env servidor.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
