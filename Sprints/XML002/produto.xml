@@ -1,0 +1,19 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+
+<Product xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="produto.xsd"
+         ProductID="123"
+         Category="bicycle">
+
+    <ProductName>Bicicleta de 3 Rodas</ProductName>
+    <ProductType>Utilitário</ProductType>
+    <Price>120</Price>
+    <Class>Sport</Class>
+    <Company>ABC Int.</Company>
+
+    <Provider>
+        <Name>João</Name>
+        <City>Viseu</City>
+    </Provider>
+
+</Product>
