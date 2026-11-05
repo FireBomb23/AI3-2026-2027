@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sugestões dos Alunos</title>
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body data-estado="a-verificar">
+<main>
+  <h1>Sugestões dos Alunos</h1>
+
+  <p id="ligacao" role="status" aria-live="polite"></p>
+  <p id="atualizacao" hidden>Há uma nova versão da interface. <button id="btn-atualizar" type="button">Atualizar a aplicação</button></p>
+  <div id="mensagens" role="alert"></div>
+
+  <section aria-labelledby="titulo-config">
+    <h2 id="titulo-config">Configurações</h2>
+    <div class="linha">
+      <div>
+        <label for="cfg-tema">Tema</label>
+        <select id="cfg-tema">
+          <option value="claro">Claro</option>
+          <option value="escuro">Escuro</option>
+        </select>
+      </div>
+      <div>
+        <label for="cfg-ordenacao">Ordenação das sugestões</label>
+        <select id="cfg-ordenacao">
+          <option value="recentes">Mais recentes primeiro</option>
+          <option value="estado">Por estado</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <p id="a-verificar">A verificar sessão…</p>
+
+  <section id="aviso-ligacao" aria-labelledby="titulo-aviso" hidden>
+    <h2 id="titulo-aviso">Sem ligação</h2>
+    <p>Não foi possível contactar o servidor: não é possível entrar nem confirmar se a sessão continua ativa.</p>
+    <button id="btn-tentar" type="button">Tentar de novo</button>
+  </section>
+
+  <section id="entrada" aria-labelledby="titulo-entrada" hidden>
+    <h2 id="titulo-entrada">Entrar</h2>
+    <form id="form-entrada">
+      <label for="utilizador">Utilizador (número de aluno ou nome.apelido)</label>
+      <input id="utilizador" name="utilizador" autocomplete="username" required>
+      <label for="palavraPasse">Palavra-passe</label>
+      <input id="palavraPasse" name="palavraPasse" type="password" autocomplete="current-password" required>
+      <button type="submit">Entrar</button>
+    </form>
+  </section>
+
+  <div id="sessao" hidden>
+    <section aria-labelledby="titulo-sessao">
+      <h2 id="titulo-sessao" tabindex="-1">Sessão</h2>
+      <p><strong id="sessao-nome"></strong> (<span id="sessao-papel"></span>)</p>
+      <p>A sessão expira às <span id="sessao-expira"></span>. Tempo restante: <span id="sessao-restante"></span>.</p>
+      <p>
+        <button id="btn-sugestoes" type="button"></button>
+        <button id="btn-terminar" type="button" class="secundario" aria-describedby="nota-terminar">Terminar sessão</button>
+      </p>
+      <p id="nota-terminar" class="nota" hidden>Sem ligação não é possível terminar a sessão: só o servidor pode apagar o cookie.</p>
+      <p id="info-lista" class="nota"></p>
+      <ul id="lista-sugestoes"></ul>
+    </section>
+
+    <section id="area-nova" aria-labelledby="titulo-nova" hidden>
+      <h2 id="titulo-nova">Nova sugestão</h2>
+      <form id="form-nova">
+        <fieldset id="campos-nova">
+          <label for="titulo">Título (10 a 120 caracteres)</label>
+          <input id="titulo" name="titulo" required minlength="10" maxlength="120">
+          <label for="categoria">Categoria</label>
+          <select id="categoria" name="categoria" required></select>
+          <label for="descricao">Descrição (20 a 2000 caracteres)</label>
+          <textarea id="descricao" name="descricao" required minlength="20" maxlength="2000"></textarea>
+          <button type="submit">Submeter</button>
+        </fieldset>
+        <p id="nota-categorias" class="nota" hidden>Não foi possível obter as categorias: o formulário está desativado até haver ligação.</p>
+      </form>
+    </section>
+  </div>
+</main>
+<dialog id="dlg-terminar" aria-labelledby="dlg-texto">
+  <form method="dialog">
+    <p id="dlg-texto"></p>
+    <button value="cancelar" class="secundario">Cancelar</button>
+    <button value="confirmar">Terminar sessão</button>
+  </form>
+</dialog>
+<script type="module" src="app.js"></script>
+</body>
+</html>
