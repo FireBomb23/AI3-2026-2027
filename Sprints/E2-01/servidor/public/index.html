@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f4c81">
+  <meta name="description" content="Reporta — PWA de comunicação e acompanhamento de ocorrências na via pública.">
+  <title>Reporta · Gestão de Ocorrências</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icones/icone-192.png">
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+  <header class="cabecalho">
+    <h1>Reporta</h1>
+    <p class="subtitulo">Comunicação de ocorrências na via pública</p>
+  </header>
+
+  <main class="conteudo">
+    <section class="cartao" aria-labelledby="titulo-estado">
+      <h2 id="titulo-estado">Estado da aplicação</h2>
+      <p id="estado-sw">A verificar registo do Service Worker…</p>
+      <p class="nota">Esqueleto da PWA (Sprint E2-01). As funcionalidades de IndexedDB, formulário e sincronização serão adicionadas nos sprints seguintes.</p>
+    </section>
+  </main>
+
+  <script src="/bd.js" defer></script>
+  <script src="/formulario.js" defer></script>
+  <script src="/app.js" defer></script>
+</body>
+</html>
